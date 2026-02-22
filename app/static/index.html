@@ -3,38 +3,273 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Entropy Video Search</title>
+  <title>Entropy Memory Search</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    body { font-family: Arial, sans-serif; margin: 2rem; max-width: 900px; }
-    .card { border: 1px solid #ddd; border-radius: 10px; padding: 1rem; margin-bottom: 1rem; }
-    input, button { font-size: 1rem; padding: 0.5rem; }
-    #results .item { border-top: 1px solid #eee; padding: 0.75rem 0; }
-    .meta { color: #666; font-size: 0.9rem; }
-    video { width: 100%; margin-top: 1rem; border-radius: 10px; background: #000; }
+    :root {
+      --bg: #f4f5f9;
+      --surface: #ffffff;
+      --text: #222939;
+      --muted: #6b7280;
+      --primary: #6b78f0;
+      --primary-strong: #5a66e4;
+      --line: #d8ddf7;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid #eceef5;
+      height: 72px;
+      display: flex;
+      align-items: center;
+    }
+
+    .container {
+      width: min(1060px, 92vw);
+      margin: 0 auto;
+    }
+
+    .topbar .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      font-size: 1.7rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .brand .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 10px;
+      background: radial-gradient(circle at 30% 30%, #96a1ff, #6473ed);
+    }
+
+    .brand .accent { color: #6473ed; }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      font-weight: 500;
+      color: #3f4656;
+      font-size: 0.95rem;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 64px 0 22px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.35rem);
+      line-height: 1.05;
+      letter-spacing: -0.035em;
+    }
+
+    .hero p {
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 1.15rem;
+    }
+
+    .dropzone {
+      margin: 30px auto 22px;
+      background: #eceef9;
+      border: 3px dashed #bcc3ee;
+      border-radius: 14px;
+      min-height: 286px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 14px;
+      padding: 2rem;
+    }
+
+    .file-row {
+      display: flex;
+      align-items: stretch;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 24px rgba(95, 110, 240, 0.24);
+    }
+
+    .file-btn {
+      background: linear-gradient(180deg, #7482f8 0%, #6675f1 100%);
+      color: white;
+      border: 0;
+      padding: 0.95rem 1.55rem;
+      min-width: 220px;
+      font-size: 1.4rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .upload-btn {
+      border: 0;
+      background: #5766e8;
+      color: white;
+      padding: 0 1.35rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-left: 1px solid rgba(255,255,255,0.35);
+    }
+
+    .helper {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    #videoFile { display: none; }
+
+    .status {
+      min-height: 24px;
+      color: #4a5568;
+      font-weight: 500;
+    }
+
+    .panel {
+      background: var(--surface);
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(15, 23, 42, 0.07);
+      padding: 1.3rem 1.5rem;
+      margin: 18px auto;
+    }
+
+    .panel h2 {
+      margin: 0 0 14px;
+      font-size: 1.55rem;
+      letter-spacing: -0.01em;
+    }
+
+    .search-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .search-row input {
+      flex: 1;
+      min-width: 260px;
+      padding: 0.85rem 0.95rem;
+      border-radius: 10px;
+      border: 1px solid #d7dce7;
+      font-size: 1rem;
+    }
+
+    .search-row button {
+      border: 0;
+      background: #27324a;
+      color: #fff;
+      border-radius: 10px;
+      padding: 0 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    #results .item {
+      border: 1px solid #e8ebf4;
+      background: #f9faff;
+      border-radius: 12px;
+      padding: 0.9rem;
+      margin-top: 0.72rem;
+    }
+
+    .meta { color: var(--muted); font-size: 0.92rem; }
+
+    .result-play {
+      margin-top: 8px;
+      border: 0;
+      border-radius: 8px;
+      padding: 0.45rem 0.78rem;
+      background: #6170ef;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    video {
+      width: 100%;
+      border-radius: 12px;
+      background: #111827;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 760px) {
+      .nav { display: none; }
+      .file-btn { font-size: 1.1rem; min-width: 180px; }
+      .upload-btn { font-size: 0.95rem; }
+      .dropzone { min-height: 230px; }
+    }
   </style>
 </head>
 <body>
-  <h1>Memory Search Demo</h1>
-
-  <div class="card">
-    <h2>1) Upload Video</h2>
-    <input id="videoFile" type="file" accept="video/*" />
-    <button id="uploadBtn">Upload + Index</button>
-    <p id="uploadStatus"></p>
-  </div>
-
-  <div class="card">
-    <h2>2) Search</h2>
-    <input id="queryInput" placeholder="e.g., price on monitor" size="40" />
-    <button id="searchBtn">Search</button>
-    <div id="results"></div>
-  </div>
-
-  <div class="card">
-    <h2>3) Play Selected 10s Clip</h2>
-    <div id="currentClip" class="meta">No clip selected.</div>
-    <video id="player" controls></video>
-  </div>
+    <header class="topbar">
+        <div class="container">
+          <div class="brand"><span class="dot"></span><span class="accent">Entropy</span>Memory</div>
+          <nav class="nav">
+            <span>Upload</span>
+            <span>Search</span>
+            <span>Playback</span>
+            <span>API</span>
+          </nav>
+        </div>
+      </header>
+    
+      <main class="container">
+        <section class="hero">
+          <h1>Online Memory Clip Finder</h1>
+          <p>Upload one long video, search instantly, and jump to the correct 10s moment.</p>
+        </section>
+    
+        <section class="dropzone">
+          <label class="file-row" for="videoFile">
+            <span class="file-btn">Choose Video</span>
+            <button id="uploadBtn" type="button" class="upload-btn">Upload & Index</button>
+          </label>
+          <input id="videoFile" type="file" accept="video/*" />
+          <p class="helper">Supported: MP4/MOV/MKV • chunks are generated every 10 seconds</p>
+          <p id="uploadStatus" class="status"></p>
+        </section>
+    
+        <section class="panel">
+          <h2>Search by memory</h2>
+          <div class="search-row">
+            <input id="queryInput" placeholder="Try: black notebook on desk" />
+            <button id="searchBtn">Search</button>
+          </div>
+          <div id="results"></div>
+        </section>
+    
+        <section class="panel">
+          <h2>Selected clip</h2>
+          <div id="currentClip" class="meta">No clip selected yet.</div>
+          <video id="player" controls></video>
+        </section>
+      </main>
 
   <script src="/static/app.js"></script>
 </body>
