@@ -211,3 +211,8 @@ __marimo__/
 chunks/
 frames/
 *.mkv
+
+# macOS
+.DS_Store
+# runtime output
+data/

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Entropy Video Search</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; max-width: 900px; }
+    .card { border: 1px solid #ddd; border-radius: 10px; padding: 1rem; margin-bottom: 1rem; }
+    input, button { font-size: 1rem; padding: 0.5rem; }
+    #results .item { border-top: 1px solid #eee; padding: 0.75rem 0; }
+    .meta { color: #666; font-size: 0.9rem; }
+    video { width: 100%; margin-top: 1rem; border-radius: 10px; background: #000; }
+  </style>
+</head>
+<body>
+  <h1>Memory Search Demo</h1>
+
+  <div class="card">
+    <h2>1) Upload Video</h2>
+    <input id="videoFile" type="file" accept="video/*" />
+    <button id="uploadBtn">Upload + Index</button>
+    <p id="uploadStatus"></p>
+  </div>
+
+  <div class="card">
+    <h2>2) Search</h2>
+    <input id="queryInput" placeholder="e.g., price on monitor" size="40" />
+    <button id="searchBtn">Search</button>
+    <div id="results"></div>
+  </div>
+
+  <div class="card">
+    <h2>3) Play Selected 10s Clip</h2>
+    <div id="currentClip" class="meta">No clip selected.</div>
+    <video id="player" controls></video>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
